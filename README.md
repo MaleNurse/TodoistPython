@@ -3,7 +3,7 @@
 
 `python task_list.py --a APIKEY [--o OUTPUT]`
 
-If no filename or path not specified in OUTPUT, creates "task_list.txt" in current directory with overdue and next 2 days of tasks; e.g.:
+If no filename or path specified in OUTPUT, creates "task_list.txt" in current directory with overdue and next 2 days of tasks; e.g.:
 
 ```
 OVERDUE:
