@@ -7,15 +7,51 @@ import datetime
 import re
 import argparse
 import sys
+import os.path
 
 #define and require input of API key from command line
-parser = argparse.ArgumentParser(description='API Key')
-parser.add_argument('--api', type=str, help='Todoist API key')
+def arg_parsing():
+    parser = argparse.ArgumentParser(description='Todoist Text List Generator')
+    parser._action_groups.pop()
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+    required.add_argument('-a', '--apikey', type=str, help='Todoist API key', required=True)
+    optional.add_argument('-o', '--output', type=str, help='Path and/or name for text file')
+    return parser.parse_args()
 
-args = parser.parse_args()
+args = arg_parsing()
 
-if not args.api:
+#exit and bitch if API key wasn't supplied
+if not args.apikey:
     sys.exit("Please specify your API key with the --api flag")
+
+#set regex patterns for files ending in ".txt" or paths ending in "/"
+file_pattern = re.compile(".*\.txt$")
+path_pattern = re.compile(".*\\$")
+
+#if out not supplied use default
+if not args.output:
+    text_file = "task_list.txt"
+#if filename and path were supplied, use it
+elif file_pattern.match(args.output):
+    text_file = args.output
+#if a path ending with "/" was supplied, use it with a default filename
+elif path_pattern.match(args.output):
+    text_file = args.output + "task_list.txt"
+#other wise assume that a path was supplied that wasn't ended with "/"
+else:
+    text_file = args.output + "/task_list.txt"
+
+#check if the supplied/default path exists and if we can write to it
+def test_path():
+    try:
+        open(text_file, 'w')
+        return True
+    except OSError:
+        return False
+
+if not test_path():
+    sys.exit("\nInvalid path or insufficient permissions")
 
 #set 2 days in the future's date in format "14 Feb" for the API filter
 twodays_t = datetime.datetime.today() + datetime.timedelta(days=2)
@@ -26,7 +62,7 @@ BASE_URL = "https://api.todoist.com/rest/v1/tasks"
 
 #HTTP header w/ API token
 headers = {
-  "Authorization": "Bearer " + args.api
+  "Authorization": "Bearer " + args.apikey
 }
 
 #set filter strings
@@ -86,7 +122,7 @@ for item in json_array_twodays:
     tasks_twodays.append(task_details)
 
 #write the task list line-by-line in a text file, omitting date headers w/o tasks
-with open('tasks.txt', 'w') as f:
+with open(text_file, 'w') as f:
     if tasks_overdue:
         f.write("OVERDUE:\n")
         for item in tasks_overdue:
@@ -108,15 +144,15 @@ with open('tasks.txt', 'w') as f:
             f.write("%s\n" % item.values())
 
 #remove dict_values([' from text file line beginnings
-with open('tasks.txt', 'r') as f:
+with open(text_file, 'r') as f:
     lines = f.readlines()
-with open('tasks.txt', 'w') as f:
+with open(text_file, 'w') as f:
     for line in lines:
-        f.write(re.sub('^dict_values\(\[\'', '', line))
+        f.write(re.sub("^dict_values\(\[\'", '', line))
 
 #remove ']) from text file line ends
-with open('tasks.txt', 'r') as f:
+with open(text_file, 'r') as f:
     lines = f.readlines()
-with open('tasks.txt', 'w') as f:
+with open(text_file, 'w') as f:
     for line in lines:
-        f.write(re.sub('\'\]\)', '', line))
+        f.write(re.sub("\'\]\)", '', line))

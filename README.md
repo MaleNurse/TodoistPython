@@ -1,9 +1,9 @@
 # TodoistPython
  Python script for pulling Todoist tasks to a text file, maybe more later.
 
-`python task_list.py --api XXXXXX`
+`python task_list.py --a APIKEY [--o OUTPUT]`
 
-Creates "tasks.txt" with overdue and next 2 days of tasks e.g.:
+If not filename or path not specified in OUTPUT, creates "task_list.txt" in current directory with overdue and next 2 days of tasks; e.g.:
 
 ```
 OVERDUE:
