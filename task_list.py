@@ -17,7 +17,7 @@ args = parser.parse_args()
 if not args.api:
     sys.exit("Please specify your API key with the --api flag")
 
-#set tomrrows date in format e.g. 14 Feb for the API filter
+#set 2 days in the future's date in format "14 Feb" for the API filter
 twodays_t = datetime.datetime.today() + datetime.timedelta(days=2)
 twodays = twodays_t.strftime("%d %b")
 
@@ -31,7 +31,7 @@ headers = {
 
 #set filter strings
 params_overdue = {
-  "filter": "overdue"
+  "filter": "overdue|yesterday" #yesterday req b/c API doesn't think it's overdue...
 }
 
 params_today = {
