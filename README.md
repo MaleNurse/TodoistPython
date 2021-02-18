@@ -21,4 +21,6 @@ CH202 Paper
 In 2 Days:
 N248 paper
 ```
-See the integrations menu in your Todoist account for your API key.
+If run in something like cron, it will keep the list updated. I utilize this to display on a KLWP wallpaper. Sorry for the messy code if someone actually looks at this, I have no clue what I"m doing.
+
+[See the integrations menu in your Todoist account for your API key.](https://todoist.com/prefs/integrations)
