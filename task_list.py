@@ -88,6 +88,18 @@ response_today = requests.get(BASE_URL, headers=headers, params=params_today)
 response_tomorrow = requests.get(BASE_URL, headers=headers, params=params_tomorrow)
 response_twodays = requests.get(BASE_URL, headers=headers, params=params_twodays)
 
+#Check response code and exit if error
+if response_today.status_code == 403 or response_overdue.status_code == 403 or response_tomorrow.status_code == 403 or response_twodays.status_code == 403:
+    sys.exit("API returned '403 Forbidden'. Check API key")
+elif response_today.status_code == 204 or response_overdue.status_code == 204 or response_tomorrow.status_code == 204 or response_twodays.status_code == 204:
+    sys.exit("API returned no data")
+elif response_today.status_code != 200 or response_overdue.status_code != 200 or response_tomorrow.status_code != 200 or response_twodays.status_code != 200:
+    print(response_today.status_code)
+    print(response_overdue.status_code)
+    print(response_tomorrow.status_code)
+    print(response_twodays.status_code)
+    sys.exit("Unknown error from API, See HTTP status codes above")
+
 #place API response text in JSON array
 json_array_overdue = json.loads(response_overdue.text)
 json_array_today = json.loads(response_today.text)
