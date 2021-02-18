@@ -26,6 +26,6 @@ N248 paper
 ```
 If run in something like cron, it will keep the list updated. I utilize this to display on a KLWP wallpaper so I don't have to use a widget and can animate/hide it. 
 
-Sorry for the messy code if someone actually looks at this, I have no clue what I'm doing.
+Sorry for the messy code if someone actually looks at this; I have no clue what I'm doing.
 
 [See the integrations menu in your Todoist account for your API key.](https://todoist.com/prefs/integrations)
