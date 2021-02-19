@@ -23,6 +23,7 @@ args = arg_parsing()
 
 #exit and bitch if API key wasn't supplied
 if not args.apikey:
+    print(datetime.now())
     sys.exit("Please specify your API key with the --api flag")
 
 #set regex patterns for files ending in ".txt" or paths ending in "/"
@@ -51,6 +52,7 @@ def test_path():
         return False
 
 if not test_path():
+    print(datetime.now())
     sys.exit("\nInvalid path or insufficient permissions")
 
 #set 2 days in the future's date in format "14 Feb" for the API filter
@@ -90,10 +92,13 @@ response_twodays = requests.get(BASE_URL, headers=headers, params=params_twodays
 
 #Check response code and exit if error
 if response_today.status_code == 403 or response_overdue.status_code == 403 or response_tomorrow.status_code == 403 or response_twodays.status_code == 403:
+    print(datetime.now())
     sys.exit("API returned '403 Forbidden'. Check API key")
 elif response_today.status_code == 204 or response_overdue.status_code == 204 or response_tomorrow.status_code == 204 or response_twodays.status_code == 204:
+    print(datetime.now())
     sys.exit("API returned no data")
 elif response_today.status_code != 200 or response_overdue.status_code != 200 or response_tomorrow.status_code != 200 or response_twodays.status_code != 200:
+    print(datetime.now())
     print(response_today.status_code)
     print(response_overdue.status_code)
     print(response_tomorrow.status_code)
@@ -168,3 +173,5 @@ with open(text_file, 'r') as f:
 with open(text_file, 'w') as f:
     for line in lines:
         f.write(re.sub("\'\]\)", '', line))
+
+print(datetime.now(), "Success maybe! Mazel tov!")
