@@ -8,6 +8,7 @@ import re
 import argparse
 import sys
 import os.path
+from datetime import datetime as dt
 
 #define and require input of API key from command line
 def arg_parsing():
@@ -23,7 +24,7 @@ args = arg_parsing()
 
 #exit and bitch if API key wasn't supplied
 if not args.apikey:
-    print(datetime.now())
+    print(dt.now())
     sys.exit("Please specify your API key with the --api flag")
 
 #set regex patterns for files ending in ".txt" or paths ending in "/"
@@ -52,7 +53,7 @@ def test_path():
         return False
 
 if not test_path():
-    print(datetime.now())
+    print(dt.now())
     sys.exit("\nInvalid path or insufficient permissions")
 
 #set 2 days in the future's date in format "14 Feb" for the API filter
@@ -92,18 +93,32 @@ response_twodays = requests.get(BASE_URL, headers=headers, params=params_twodays
 
 #Check response code and exit if error
 if response_today.status_code == 403 or response_overdue.status_code == 403 or response_tomorrow.status_code == 403 or response_twodays.status_code == 403:
-    print(datetime.now())
-    sys.exit("API returned '403 Forbidden'. Check API key")
-elif response_today.status_code == 204 or response_overdue.status_code == 204 or response_tomorrow.status_code == 204 or response_twodays.status_code == 204:
-    print(datetime.now())
-    sys.exit("API returned no data")
-elif response_today.status_code != 200 or response_overdue.status_code != 200 or response_tomorrow.status_code != 200 or response_twodays.status_code != 200:
-    print(datetime.now())
-    print(response_today.status_code)
-    print(response_overdue.status_code)
-    print(response_tomorrow.status_code)
-    print(response_twodays.status_code)
-    sys.exit("Unknown error from API, See HTTP status codes above")
+    print(dt.now())
+    sys.exit("API returned '403 Forbidden'. Check API key.")
+elif response_today.status_code == 204 and response_overdue.status_code == 204 and response_tomorrow.status_code == 204 and response_twodays.status_code == 204:
+    print(dt.now())
+    sys.exit("API request succeeded but returned no data.")
+elif 205 <= response_today.status_code <= 399 or 205 <= response_overdue.status_code <= 399 or 205<= response_tomorrow.status_code <= 399 or 205 <= response_twodays.status_code <= 399:
+    print(dt.now())
+    print("Today:", response_today.status_code)
+    print("Overdue:", response_overdue.status_code)
+    print("Tomorrow:", response_tomorrow.status_code)
+    print("Two days:", response_twodays.status_code)
+    sys.exit("Unknown response from API. See HTTP status codes above.")
+elif 400 <= response_today.status_code <= 499 or 400 <= response_overdue.status_code <= 499 or 400 <= response_tomorrow.status_code <= 499 or 400 <= response_twodays.status_code <= 499:
+    print(dt.now())
+    print("Today:", response_today.status_code)
+    print("Overdue:", response_overdue.status_code)
+    print("Tomorrow:", response_tomorrow.status_code)
+    print("Two days:", response_twodays.status_code)
+    sys.exit("API returned error indicating bad request. See HTTP status codes above.")
+elif response_today.status_code >=500 or response_overdue.status_code >=500 or response_tomorrow.status_code >=500 or response_twodays.status_code >= 500:
+    print(dt.now())
+    print("Today:", response_today.status_code)
+    print("Overdue:", response_overdue.status_code)
+    print("Tomorrow:", response_tomorrow.status_code)
+    print("Two days:", response_twodays.status_code)
+    sys.exit("Unknown server error from API. See HTTP status codes above.")
 
 #place API response text in JSON array
 json_array_overdue = json.loads(response_overdue.text)
@@ -174,4 +189,4 @@ with open(text_file, 'w') as f:
     for line in lines:
         f.write(re.sub("\'\]\)", '', line))
 
-print(datetime.now(), "Success maybe! Mazel tov!")
+print(dt.now(), "Success maybe! Mazel tov!")
