@@ -26,7 +26,7 @@ N248 paper
 ```
 If run in something like cron, it will keep the list updated. I utilize this to display on a KLWP wallpaper so I don't have to use a widget and can animate/hide it.
 
-Example cron entry:
+Example cron entry for updates every 15min:
 `*/15 * * * *   python /home/zach/TodoistPython/task_list.py -a XXXXXXXXXXXXXXXX -o /var/www/html/tasks.txt >/var/log/todoist.log 2>&1` 
 
 Sorry for the messy code if someone actually looks at this; I have no clue what I'm doing.
